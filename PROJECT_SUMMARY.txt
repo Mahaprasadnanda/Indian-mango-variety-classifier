@@ -1,0 +1,183 @@
+PROJECT TITLE:
+Indian Mango Classifier – Variety Identification using Transfer Learning 
+============================================================
+1. DATASET DESCRIPTION
+============================================================
+
+Dataset Type:
+- Image dataset
+- Task: Multi-class image classification
+- Goal: Identify the mango variety (NOT ripeness)
+
+Total Number of Images: 2633
+
+Number of Classes: 6
+
+Classes and Image Count:
+- AMRAPALLI: 460 images
+- ARKA_NEELACHAL_KESARI: 541 images
+- BANGANPALLI: 443 images
+- DASHEHARI: 438 images
+- SUVARNA_REKHA: 292 images
+- TOTAPURI: 464 images
+
+Notes:
+- Images include both ripe and unripe mangoes.
+- Ripeness labels were intentionally ignored.
+- Dataset is slightly imbalanced (SUVARNA_REKHA has fewer samples).
+
+============================================================
+2. DATASET SPLIT
+============================================================
+
+The full dataset was split as follows:
+
+- Training Set: ~2106 images
+- Validation Set: ~263 images
+- Test Set: ~264 images
+
+Purpose of each split:
+- Training set: Used to train the model.
+- Validation set: Used to monitor performance and fine-tune the model.
+- Test set: Used only once for final evaluation (unseen data).
+
+============================================================
+3. STEP-BY-STEP METHODOLOGY
+============================================================
+
+1. Dataset Preparation
+   - All images were organized into class-wise folders.
+   - Folder names represent class labels.
+   - Verified dataset structure using directory inspection and image count scripts.
+
+2. Data Loading
+   - Used PyTorch ImageFolder to load images.
+   - Applied transformations to resize images to 224x224.
+
+3. Data Augmentation (Training Only)
+   - Random horizontal flip
+   - Random rotation
+   - Color jitter
+   - Purpose: Improve generalization and reduce overfitting
+
+4. Handling Class Imbalance
+   - Computed class weights based on class frequencies.
+   - Used class-weighted CrossEntropyLoss.
+   - This helped minority classes (especially SUVARNA_REKHA).
+
+5. Model Selection
+   - Used EfficientNet-B0 pretrained on ImageNet.
+   - Reason: Strong performance on medium-sized datasets and fine-grained tasks.
+
+6. Training Strategy
+   - Phase 1: Feature Extraction
+     - Backbone frozen.
+     - Only classifier head trained.
+   - Phase 2: Fine-Tuning
+     - Top layers of EfficientNet unfrozen.
+     - Very small learning rate used.
+     - Improved performance further.
+
+============================================================
+4. TRAINING DETAILS
+============================================================
+
+Model Used:
+- EfficientNet-B0 (Transfer Learning)
+
+Optimizer:
+- Adam optimizer
+
+Loss Function:
+- CrossEntropyLoss with class weights
+
+Epochs:
+- Initial training (frozen backbone): 10 epochs
+- Fine-tuning: 5 epochs
+
+Hardware:
+- NVIDIA GTX 1650 GPU
+
+============================================================
+5. ACCURACY RESULTS
+============================================================
+
+Training Accuracy:
+- Approximately 96–97% after fine-tuning
+
+Validation Accuracy:
+- Best validation accuracy: ~92.4%
+
+Test Accuracy:
+- Final Test Accuracy: 0.9090909090909091 (~90.9%)
+
+============================================================
+6. TEST SET CLASSIFICATION REPORT
+============================================================
+
+Precision, Recall, F1-score per class:
+
+AMRAPALLI:
+- Precision: 0.9348
+- Recall: 0.9556
+- F1-score: 0.9451
+
+ARKA_NEELACHAL_KESARI:
+- Precision: 0.9672
+- Recall: 1.0000
+- F1-score: 0.9833
+
+BANGANPALLI:
+- Precision: 0.7500
+- Recall: 0.8333
+- F1-score: 0.7895
+
+DASHEHARI:
+- Precision: 0.9767
+- Recall: 0.7500
+- F1-score: 0.8485
+
+SUVARNA_REKHA:
+- Precision: 0.7647
+- Recall: 1.0000
+- F1-score: 0.8667
+
+TOTAPURI:
+- Precision: 1.0000
+- Recall: 0.9524
+- F1-score: 0.9756
+
+Overall Metrics:
+- Accuracy: 0.9091
+- Macro Average F1-score: 0.9014
+- Weighted Average F1-score: 0.9091
+
+============================================================
+7. CONFUSION MATRIX (TEST SET)
+============================================================
+
+Confusion Matrix:
+
+[[43  1  0  1  0  0]
+ [ 0 59  0  0  0  0]
+ [ 0  0 30  0  6  0]
+ [ 3  0 10 42  1  0]
+ [ 0  0  0  0 26  0]
+ [ 0  1  0  0  1 40]]
+
+Observations:
+- Most errors occur between visually similar varieties.
+- BANGANPALLI shows confusion with SUVARNA_REKHA and DASHEHARI.
+- TOTAPURI and ARKA_NEELACHAL_KESARI are classified very accurately.
+
+============================================================
+8. CONCLUSION
+============================================================
+
+This project demonstrates the effective use of transfer learning for fine-grained image classification. By leveraging a pretrained EfficientNet-B0 model and applying fine-tuning with proper data handling and class imbalance correction, a strong test accuracy of approximately 91% was achieved. The model generalizes well to unseen data and provides a solid foundation for future extensions.
+
+
+
+============================================================
+END OF FILE
+============================================================
